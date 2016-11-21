@@ -8,8 +8,6 @@
 
 import Turnstile
 import TurnstileCrypto
-import SQLiteStORM
-import StORM
 
 open class AuthAccount : SQLiteStORM, Account {
 	public var uniqueID: String = ""
