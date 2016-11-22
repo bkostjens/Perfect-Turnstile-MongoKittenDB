@@ -9,32 +9,35 @@
 import Foundation
 import SwiftRandom
 import Turnstile
+import MongoKitten
 
 
+open class AccessTokenStore {
 
-open class AccessTokenStore : SQLiteStORM {
-
+    let mongo : Mongo = Mongo.shared
+    
 	var token: String = ""
 	var userid: String = ""
 	var created: Int = 0
 	var updated: Int = 0
 	var idle: Int = 86400 // 86400 seconds = 1 day
 
-	override open func table() -> String {
+	/*override open func table() -> String {
 		return "tokens"
 	}
 
-
+     */
+    
 	// Need to do this because of the nature of Swift's introspection
-	open override func to(_ this: StORMRow) {
-		token		= this.data["token"] as! String
-		userid		= (this.data["userid"] as! String)
-		created		= this.data["created"] as! Int
-		updated		= this.data["updated"] as! Int
-		idle		= this.data["idle"] as! Int
-
+	open func to(_ this: Document) {
+		token		= this["token"].string
+		userid		= this["userid"].string
+		created		= this["created"].int
+		updated		= this["updated"].int
+		idle		= this["idle"].int
 	}
 
+    /*
 	func rows() -> [AccessTokenStore] {
 		var rows = [AccessTokenStore]()
 		for i in 0..<self.results.rows.count {
@@ -43,15 +46,16 @@ open class AccessTokenStore : SQLiteStORM {
 			rows.append(row)
 		}
 		return rows
-	}
+	}*/
+    
 	// Create the table if needed
-	public func setup() {
+	/*public func setup() {
 		do {
 			try sqlExec("CREATE TABLE IF NOT EXISTS tokens (token TEXT PRIMARY KEY NOT NULL, userid TEXT, created INTEGER, updated INTEGER, idle INTEGER)")
 		} catch {
 			print(error)
 		}
-	}
+	}*/
 
 
 	private func now() -> Int {
@@ -85,4 +89,36 @@ open class AccessTokenStore : SQLiteStORM {
 		}
 		return token
 	}
+    
+    private func create() throws {
+        let token : Document = [
+            "token": ~self.token,
+            "userid": ~self.userid,
+            "created": ~self.created,
+            "updated": ~self.updated,
+            "idle": ~self.idle
+        ]
+        
+        do {
+            try mongo.database["Token"].insert(token)
+        } catch {
+            throw MongoError.error("Error inserting new Token document: \(error)")
+        }
+    }
+    
+    private func save() throws {
+        do {
+            let token : Document = [
+                "token": ~self.token,
+                "userid": ~self.userid,
+                "created": ~self.created,
+                "updated": ~self.updated,
+                "idle": ~self.idle
+            ]
+            try mongo.database["Token"].update(matching: "token" == self.token, to: token)
+        } catch {
+            throw MongoError.error("Could not update token document")
+        }
+        
+    }
 }

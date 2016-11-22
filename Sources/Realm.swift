@@ -34,10 +34,10 @@ class AuthRealm : Realm {
 
 	}
 
-	private func authenticate(credentials: AccessToken) throws -> Account {
+	/*private func authenticate(credentials: AccessToken) throws -> Account {
 //		print("======= AUTHENTICATE AccessToken =======")
-		let account = AuthAccount(connect!)
-		let token = AccessTokenStore(connect!)
+		let account = AuthAccount()
+		let token = AccessTokenStore()
 //		print(credentials.string)
 		do {
 			try token.get(credentials.string)
@@ -49,12 +49,12 @@ class AuthRealm : Realm {
 		} catch {
 			throw IncorrectCredentialsError()
 		}
-	}
+	}*/
 
 
 	private func authenticate(credentials: UsernamePassword) throws -> Account {
 //		print("======= AUTHENTICATE =======")
-		let account = AuthAccount(connect!)
+		let account = AuthAccount()
 		do {
 			let thisAccount = try account.get(credentials.username, credentials.password)
 			return thisAccount
@@ -82,12 +82,12 @@ class AuthRealm : Realm {
 	/**
 	Registers PasswordCredentials against the AuthRealm.
 	*/
-	public func register(credentials: Credentials) throws -> Account {
+	/*public func register(credentials: Credentials) throws -> Account {
 
 //		print("======= REGISTER =======")
 
-		let account = AuthAccount(connect!)
-		let newAccount = AuthAccount(connect!)
+		let account = AuthAccount()
+		let newAccount = AuthAccount()
 		newAccount.id(String(random.secureToken))
 
 		switch credentials {
@@ -120,5 +120,5 @@ class AuthRealm : Realm {
 			throw UnsupportedCredentialsError()
 		}
 		return newAccount
-	}
+	}*/
 }

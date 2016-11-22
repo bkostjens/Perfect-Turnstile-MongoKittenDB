@@ -1,6 +1,6 @@
 //
 //  Account.swift
-//  PerfectTurnstileSQLite
+//  PerfectTurnstileMongoDB
 //
 //  Created by Jonathan Guthrie on 2016-10-17.
 //
@@ -8,8 +8,14 @@
 
 import Turnstile
 import TurnstileCrypto
+import MongoKitten
 
-open class AuthAccount : SQLiteStORM, Account {
+
+
+open class AuthAccount : Account {
+    
+    let mongo : Mongo = Mongo.shared
+    
 	public var uniqueID: String = ""
 
 	public var username: String = ""
@@ -23,48 +29,43 @@ open class AuthAccount : SQLiteStORM, Account {
 	public var email: String = ""
 
 	public var internal_token: AccessTokenStore = AccessTokenStore()
-
-	override open func table() -> String {
+    
+	/*override open func table() -> String {
 		return "users"
-	}
+	}*/
 
+    /*public convenience init(_ database:MongoDatabase) {
+        self.database = database
+        self.init(database)
+    }*/
+    
 	public func id(_ newid: String) {
 		uniqueID = newid
 	}
 
+    
 	// Need to do this because of the nature of Swift's introspection
-	override open func to(_ this: StORMRow) {
-		uniqueID	= this.data["uniqueID"] as! String
-		username	= (this.data["username"] as! String)
-		password	= (this.data["password"] as! String) // lets not read the password!
-		facebookID	= (this.data["facebookID"] as! String)
-		googleID	= (this.data["googleID"] as! String)
-		firstname	= (this.data["firstname"] as! String)
-		lastname	= (this.data["lastname"] as! String)
-		email		= (this.data["email"] as! String)
+	open func to(_ this: Document) {
+		uniqueID	= this["_id"].string
+		username	= this["username"].string
+		password	= this["password"].string // lets not read the password!
+		facebookID	= this["facebookID"].string
+		googleID	= this["googleID"].string
+		firstname	= this["firstname"].string
+		lastname	= this["lastname"].string
+		email		= this["email"].string
 	}
-
-	func rows() -> [AuthAccount] {
-		var rows = [AuthAccount]()
-		for i in 0..<self.results.rows.count {
-			let row = AuthAccount()
-			row.to(self.results.rows[i])
-			rows.append(row)
-		}
-		return rows
-	}
-
-
+    
 	// Create the table if needed
-	public func setup() {
+	/*public func setup() {
 		do {
 			try sqlExec("CREATE TABLE IF NOT EXISTS users (uniqueID TEXT PRIMARY KEY NOT NULL, username TEXT, password TEXT, facebookID TEXT, googleID TEXT, firstname TEXT, lastname TEXT, email TEXT)")
 		} catch {
 			print(error)
 		}
-	}
+	}*/
 
-	func make() throws {
+	/*func make() throws {
 		print("IN MAKE")
 		do {
 			password = BCrypt.hash(password: password)
@@ -72,29 +73,38 @@ open class AuthAccount : SQLiteStORM, Account {
 		} catch {
 			print(error)
 		}
-	}
+	}*/
+    
 	func get(_ un: String, _ pw: String) throws -> AuthAccount {
-		let cursor = StORMCursor(limit: 1, offset: 0)
-		do {
-			try select(whereclause: "username = :1", params: [un], orderby: [], cursor: cursor)
-			if self.results.rows.count == 0 {
-				throw StORMError.noRecordFound
-			}
-			to(self.results.rows[0])
-		} catch {
-			print(error)
-			throw StORMError.noRecordFound
-		}
+      
+        do {
+            let userCollection = mongo.database["User"]
+            let q: Query = "username" == un
+            if let user = try userCollection.findOne(matching: q) {
+                print ("User found! - \(user["firstname"].string)")
+                to(user)
+            } else {
+                throw MongoError.noRecordFound
+            }
+        } catch {
+            print (error)
+            throw MongoError.noRecordFound
+        }
+
 		if try BCrypt.verify(password: pw, matchesHash: password) {
 			return self
 		} else {
-			throw StORMError.noRecordFound
+			throw MongoError.noRecordFound
 		}
 	}
+    
+    
 	func exists(_ un: String) -> Bool {
 		do {
-			try select(whereclause: "username = :1", params: [un], orderby: [], cursor: StORMCursor(limit: 1, offset: 0))
-			if results.rows.count == 1 {
+            let userCollection = mongo.database["User"]
+            let q: Query = "username" == un
+
+            if let _ = try userCollection.findOne(matching: q) {
 				return true
 			} else {
 				return false
@@ -104,6 +114,22 @@ open class AuthAccount : SQLiteStORM, Account {
 			return false
 		}
 	}
+    
+    /*private func create() throws {
+        let user : Document = [
+            "token": ~self.token,
+            "userid": ~self.userid,
+            "created": ~self.created,
+            "updated": ~self.updated,
+            "idle": ~self.idle
+        ]
+        
+        do {
+            try mongo.database["Token"].insert(token)
+        } catch {
+            throw MongoError.error("Error inserting new Token document: \(error)")
+        }
+    }*/
 }
 
 

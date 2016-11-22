@@ -29,13 +29,13 @@ public class PerfectSessionManager: SessionManager {
 
 	/// Deletes the session for a session identifier.
 	public func destroySession(identifier: String) {
-		let token = AccessTokenStore(connect!)
+		/*let token = AccessTokenStore()
 		do {
 			try token.get(identifier)
 			try token.delete()
 		} catch {
 			print(error)
-		}
+		}*/
 		//sessions.removeValue(forKey: identifier)
 	}
 
@@ -44,13 +44,14 @@ public class PerfectSessionManager: SessionManager {
 	contains the SessionID.
 	*/
 	public func restoreAccount(fromSessionID identifier: String) throws -> Account {
-		let token = AccessTokenStore(connect!)
+		/*let token = AccessTokenStore()
 		do {
 			try token.get(identifier)
 			guard token.check()! else { throw InvalidSessionError() }
 			return SessionAccount(uniqueID: token.userid)
 		} catch {
 			throw InvalidSessionError()
-		}
+		}*/
+        return SessionAccount(uniqueID: "123")
 	}
 }
