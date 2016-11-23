@@ -55,6 +55,7 @@ class AuthRealm : Realm {
 	private func authenticate(credentials: UsernamePassword) throws -> Account {
 //		print("======= AUTHENTICATE =======")
 		let account = AuthAccount()
+        
 		do {
 			let thisAccount = try account.get(credentials.username, credentials.password)
 			return thisAccount

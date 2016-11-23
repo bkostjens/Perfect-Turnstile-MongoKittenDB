@@ -14,8 +14,6 @@ import MongoKitten
 
 open class AccessTokenStore {
 
-    let mongo : Mongo = Mongo.shared
-    
 	var token: String = ""
 	var userid: String = ""
 	var created: Int = 0
@@ -100,7 +98,7 @@ open class AccessTokenStore {
         ]
         
         do {
-            try mongo.database["Token"].insert(token)
+            try mongoConnect!.database["Token"].insert(token)
         } catch {
             throw MongoError.error("Error inserting new Token document: \(error)")
         }
@@ -115,7 +113,7 @@ open class AccessTokenStore {
                 "updated": ~self.updated,
                 "idle": ~self.idle
             ]
-            try mongo.database["Token"].update(matching: "token" == self.token, to: token)
+            try mongoConnect!.database["Token"].update(matching: "token" == self.token, to: token)
         } catch {
             throw MongoError.error("Could not update token document")
         }

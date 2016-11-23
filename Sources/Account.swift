@@ -14,8 +14,6 @@ import MongoKitten
 
 open class AuthAccount : Account {
     
-    let mongo : Mongo = Mongo.shared
-    
 	public var uniqueID: String = ""
 
 	public var username: String = ""
@@ -78,7 +76,7 @@ open class AuthAccount : Account {
 	func get(_ un: String, _ pw: String) throws -> AuthAccount {
       
         do {
-            let userCollection = mongo.database["User"]
+            let userCollection = mongoConnect!.database["User"]
             let q: Query = "username" == un
             if let user = try userCollection.findOne(matching: q) {
                 print ("User found! - \(user["firstname"].string)")
@@ -101,7 +99,7 @@ open class AuthAccount : Account {
     
 	func exists(_ un: String) -> Bool {
 		do {
-            let userCollection = mongo.database["User"]
+            let userCollection = mongoConnect!.database["User"]
             let q: Query = "username" == un
 
             if let _ = try userCollection.findOne(matching: q) {
