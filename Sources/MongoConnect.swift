@@ -10,15 +10,11 @@ import Foundation
 import MongoKitten
 
 final class Mongo {
-    static let shared = Mongo()
+    let server          : Server
+    let database        : Database
     
-    let server      : Server
-    let database    : Database
-    
-    let hostname        = "localhost"
-    let databaseName    = "ProProject"
-    
-    private init() {
+    public init(hostname: String, databaseName: String) {
+       
         do {
             server = try Server(mongoURL: "mongodb://\(hostname)", automatically: true)
             database = server[databaseName]
@@ -28,6 +24,5 @@ final class Mongo {
             fatalError("MongoDB is not available on the given host and port")
         }
     }
-
 }
 
