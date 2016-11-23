@@ -19,12 +19,8 @@ open class AccessTokenStore {
 	var created: Int = 0
 	var updated: Int = 0
 	var idle: Int = 86400 // 86400 seconds = 1 day
-
-	/*override open func table() -> String {
-		return "tokens"
-	}
-
-     */
+    
+    public init() {}
     
 	// Need to do this because of the nature of Swift's introspection
 	open func to(_ this: Document) {
