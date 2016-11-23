@@ -9,14 +9,17 @@
 import Foundation
 import MongoKitten
 
-var mongoConnect : MongoConnect?
+import Foundation
+import MongoKitten
 
-final class MongoConnect {
+public var mongoConnect : MongoConnect?
 
+public final class MongoConnect {
+    
     let server      : Server
     let database    : Database
     
-    private init(hostname : String = "", databaseName : String = "") {
+    public init(hostname : String = "", databaseName : String = "") {
         do {
             server = try Server(mongoURL: "mongodb://\(hostname)", automatically: true)
             database = server[databaseName]
@@ -27,4 +30,3 @@ final class MongoConnect {
         }
     }
 }
-
