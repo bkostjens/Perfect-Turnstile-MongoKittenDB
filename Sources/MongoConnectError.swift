@@ -2,11 +2,11 @@
 //  MongoError.swift
 //  PerfectTurnstileMongoDB
 //
-//  Created by Barry Kostjens on 22-11-16.
+//  Created by Barry Kostjens on 2016-11-22.
 //
 //
 
-public enum MongoError: Error {
+public enum MongoConnectError: Error {
     case database			// "No Database Specified"
     case collectionNotFound
     case error(String)		// "Error"

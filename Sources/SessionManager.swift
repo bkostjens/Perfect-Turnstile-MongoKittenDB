@@ -3,7 +3,7 @@
 //  PerfectTurnstileSQLite
 //
 //  Created by Jonathan Guthrie on 2016-10-19.
-//
+//  Ported to MongoDB by Barry Kostjens on 2016-11-24.
 //
 
 import Foundation
@@ -11,8 +11,9 @@ import TurnstileCrypto
 import Turnstile
 
 /**
-SQLiteSessionManager manages sessions via SQLite storage
+MongoDBSessionManager manages sessions via SQLite storage
 */
+
 public class PerfectSessionManager: SessionManager {
 	/// Dictionary of sessions
 	//private var sessions = [String: String]()
@@ -29,14 +30,14 @@ public class PerfectSessionManager: SessionManager {
 
 	/// Deletes the session for a session identifier.
 	public func destroySession(identifier: String) {
-		/*let token = AccessTokenStore()
+        print ("DestroySession: ",identifier)
+		let token = AccessTokenStore()
 		do {
-			try token.get(identifier)
+            try token.get(identifier: identifier)
 			try token.delete()
 		} catch {
 			print(error)
-		}*/
-		//sessions.removeValue(forKey: identifier)
+		}
 	}
 
 	/**
@@ -44,14 +45,13 @@ public class PerfectSessionManager: SessionManager {
 	contains the SessionID.
 	*/
 	public func restoreAccount(fromSessionID identifier: String) throws -> Account {
-		/*let token = AccessTokenStore()
+		let token = AccessTokenStore()
 		do {
-			try token.get(identifier)
+            try token.get(identifier: identifier)
 			guard token.check()! else { throw InvalidSessionError() }
 			return SessionAccount(uniqueID: token.userid)
 		} catch {
 			throw InvalidSessionError()
-		}*/
-        return SessionAccount(uniqueID: "123")
+		}
 	}
 }

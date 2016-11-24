@@ -3,7 +3,7 @@
 //  PerfectTurnstileSQLite
 //
 //  Created by Jonathan Guthrie on 2016-10-17.
-//
+//  Ported to MongoDB by Barry Kostjens on 2016-11-24.
 //
 
 import Foundation
@@ -96,7 +96,7 @@ open class AccessTokenStore {
         do {
             try mongoConnect!.database["Token"].insert(token)
         } catch {
-            throw MongoError.error("Error inserting new Token document: \(error)")
+            throw MongoConnectError.error("Error inserting new Token document: \(error)")
         }
     }
     
@@ -111,8 +111,28 @@ open class AccessTokenStore {
             ]
             try mongoConnect!.database["Token"].update(matching: "token" == self.token, to: token)
         } catch {
-            throw MongoError.error("Could not update token document")
+            throw MongoConnectError.error("Could not update token document")
         }
-        
+    }
+    
+    // Try to get token by identifier
+    public func get(identifier: String) throws {
+        do {
+            if let token = try mongoConnect!.database["Token"].findOne(matching: "token" == ~identifier) {
+                to(token)
+            }
+        } catch {
+            throw error
+        }
+    }
+    
+    // Try to delete the token
+    public func delete() throws {
+        print ("Delete token: ",token)
+        do {
+            try mongoConnect!.database["Token"].remove(matching: "token" == ~token)
+        } catch {
+            throw error
+        }
     }
 }

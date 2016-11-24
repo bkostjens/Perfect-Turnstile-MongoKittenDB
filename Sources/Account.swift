@@ -3,7 +3,7 @@
 //  PerfectTurnstileMongoDB
 //
 //  Created by Jonathan Guthrie on 2016-10-17.
-//
+//  Ported to MongoDB by Barry Kostjens on 2016-11-24.
 //
 
 import Turnstile
@@ -82,17 +82,17 @@ open class AuthAccount : Account {
                 print ("User found! - \(user["firstname"].string)")
                 to(user)
             } else {
-                throw MongoError.noRecordFound
+                throw MongoConnectError.noRecordFound
             }
         } catch {
             print (error)
-            throw MongoError.noRecordFound
+            throw MongoConnectError.noRecordFound
         }
 
 		if try BCrypt.verify(password: pw, matchesHash: password) {
 			return self
 		} else {
-			throw MongoError.noRecordFound
+			throw MongoConnectError.noRecordFound
 		}
 	}
     
