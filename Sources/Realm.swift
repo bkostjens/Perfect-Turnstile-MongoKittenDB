@@ -34,22 +34,22 @@ class AuthRealm : Realm {
 
 	}
 
-	/*private func authenticate(credentials: AccessToken) throws -> Account {
+	private func authenticate(credentials: AccessToken) throws -> Account {
 //		print("======= AUTHENTICATE AccessToken =======")
 		let account = AuthAccount()
 		let token = AccessTokenStore()
 //		print(credentials.string)
 		do {
-			try token.get(credentials.string)
+			try token.get(identifier: credentials.string)
 			if token.check() == false {
 				throw IncorrectCredentialsError()
 			}
-			try account.get(token.userid)
+			try account.get(identifier: token.userid)
 			return account
 		} catch {
 			throw IncorrectCredentialsError()
 		}
-	}*/
+	}
 
 
 	private func authenticate(credentials: UsernamePassword) throws -> Account {

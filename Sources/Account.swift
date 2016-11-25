@@ -10,8 +10,6 @@ import Turnstile
 import TurnstileCrypto
 import MongoKitten
 
-
-
 open class AuthAccount : Account {
     
 	public var uniqueID: String = ""
@@ -96,7 +94,17 @@ open class AuthAccount : Account {
 		}
 	}
     
-    
+    // Try to get token by identifier
+    public func get(identifier: String) throws {
+        do {
+            if let user = try mongoConnect!.database["User"].findOne(matching: "_id" == ~identifier) {
+                to(user)
+            }
+        } catch {
+            throw error
+        }
+    }
+
 	func exists(_ un: String) -> Bool {
 		do {
             let userCollection = mongoConnect!.database["User"]
