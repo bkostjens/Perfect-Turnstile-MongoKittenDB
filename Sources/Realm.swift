@@ -10,11 +10,16 @@ import Turnstile
 import TurnstileCrypto
 
 class AuthRealm : Realm {
+    
+    var server: MongoConnect
+    
 	private var random: Random = URandom()
+    
+    public init(server:MongoConnect) {
+        self.server = server
+    }
 
-	public init() { }
-
-	func authenticate(credentials: Credentials) throws -> Account {
+	public func authenticate(credentials: Credentials) throws -> Account {
 
 
 //		print("======= ENTRY =======")
@@ -36,8 +41,8 @@ class AuthRealm : Realm {
 
 	private func authenticate(credentials: AccessToken) throws -> Account {
 //		print("======= AUTHENTICATE AccessToken =======")
-		let account = AuthAccount()
-		let token = AccessTokenStore()
+		let account = AuthAccount(server: server)
+		let token = AccessTokenStore(server: server)
 //		print(credentials.string)
 		do {
 			try token.get(identifier: credentials.string)
@@ -54,7 +59,7 @@ class AuthRealm : Realm {
 
 	private func authenticate(credentials: UsernamePassword) throws -> Account {
 //		print("======= AUTHENTICATE =======")
-		let account = AuthAccount()
+        let account = AuthAccount(server: server)
         
 		do {
 			let thisAccount = try account.get(credentials.username, credentials.password)
@@ -83,12 +88,12 @@ class AuthRealm : Realm {
 	/**
 	Registers PasswordCredentials against the AuthRealm.
 	*/
-	/*public func register(credentials: Credentials) throws -> Account {
+	public func register(credentials: Credentials) throws -> Account {
 
 //		print("======= REGISTER =======")
 
-		let account = AuthAccount()
-		let newAccount = AuthAccount()
+        let account = AuthAccount(server:server)
+        let newAccount = AuthAccount(server:server)
 		newAccount.id(String(random.secureToken))
 
 		switch credentials {
@@ -121,5 +126,5 @@ class AuthRealm : Realm {
 			throw UnsupportedCredentialsError()
 		}
 		return newAccount
-	}*/
+	}
 }

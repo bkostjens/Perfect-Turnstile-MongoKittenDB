@@ -9,21 +9,15 @@
 import Foundation
 import MongoKitten
 
-import Foundation
-import MongoKitten
-
-public var mongoConnect : MongoConnect?
-
 public final class MongoConnect {
     
     let server      : Server
     let database    : Database
     
-    public init(hostname : String = "", databaseName : String = "") {
+    public init(hostname : String = "localhost", databaseName : String = "User") {
         do {
-            server = try Server(mongoURL: "mongodb://\(hostname)", automatically: true)
+            server = try Server(mongoURL: "mongodb://\(hostname)")
             database = server[databaseName]
-            mongoConnect = self
         } catch {
             // Unable to connect
             fatalError("MongoDB is not available on the given host and port")

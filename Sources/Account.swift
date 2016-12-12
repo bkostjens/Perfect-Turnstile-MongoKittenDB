@@ -12,6 +12,8 @@ import MongoKitten
 
 open class AuthAccount : Account {
     
+    var server: MongoConnect
+    
 	public var uniqueID: String = ""
 
 	public var username: String = ""
@@ -24,60 +26,54 @@ open class AuthAccount : Account {
 	public var lastname: String = ""
 	public var email: String = ""
 
-	public var internal_token: AccessTokenStore = AccessTokenStore()
-    
-	/*override open func table() -> String {
-		return "users"
-	}*/
-
-    /*public convenience init(_ database:MongoDatabase) {
-        self.database = database
-        self.init(database)
-    }*/
+	public var internal_token: AccessTokenStore
     
 	public func id(_ newid: String) {
 		uniqueID = newid
 	}
 
+    init(server:MongoConnect) {
+        self.server = server
+        self.internal_token = AccessTokenStore(server: server)
+    }
     
 	// Need to do this because of the nature of Swift's introspection
 	open func to(_ this: Document) {
-		uniqueID	= this["_id"].string
-		username	= this["username"].string
-		password	= this["password"].string // lets not read the password!
-		facebookID	= this["facebookID"].string
-		googleID	= this["googleID"].string
-		firstname	= this["firstname"].string
-		lastname	= this["lastname"].string
-		email		= this["email"].string
+		uniqueID	= this["_id"] as String? ?? ""
+		username	= this["username"] as String? ?? ""
+		password	= this["password"] as String? ?? ""
+		facebookID	= this["facebookID"] as String? ?? ""
+		googleID	= this["googleID"] as String? ?? ""
+		firstname	= this["firstname"] as String? ?? ""
+		lastname	= this["lastname"] as String? ?? ""
+		email		= this["email"] as String? ?? ""
 	}
     
-	// Create the table if needed
-	/*public func setup() {
+	// Create the collection if needed
+	public func setup() {
 		do {
-			try sqlExec("CREATE TABLE IF NOT EXISTS users (uniqueID TEXT PRIMARY KEY NOT NULL, username TEXT, password TEXT, facebookID TEXT, googleID TEXT, firstname TEXT, lastname TEXT, email TEXT)")
+			try server.database.createCollection("User")
 		} catch {
 			print(error)
 		}
-	}*/
-
-	/*func make() throws {
-		print("IN MAKE")
-		do {
-			password = BCrypt.hash(password: password)
-			try create() // can't use save as the id is populated
-		} catch {
-			print(error)
-		}
-	}*/
+	}
+    
+    func make() throws {
+        do {
+            password = BCrypt.hash(password: password)
+            try create() // can't use save as the id is populated
+        } catch {
+            print(error)
+        }
+    }
     
 	func get(_ un: String, _ pw: String) throws -> AuthAccount {
       
         do {
-            let userCollection = mongoConnect!.database["User"]
+            let userCollection = server.database["User"]
             let q: Query = "username" == un
             if let user = try userCollection.findOne(matching: q) {
-                print ("User found! - \(user["firstname"].string)")
+                print ("User found! - \(user["firstname"] as String? ?? "")")
                 to(user)
             } else {
                 throw MongoConnectError.noRecordFound
@@ -90,14 +86,14 @@ open class AuthAccount : Account {
 		if try BCrypt.verify(password: pw, matchesHash: password) {
 			return self
 		} else {
-			throw MongoConnectError.noRecordFound
+            throw MongoConnectError.noRecordFound
 		}
 	}
     
     // Try to get token by identifier
     public func get(identifier: String) throws {
         do {
-            if let user = try mongoConnect!.database["User"].findOne(matching: "_id" == ~identifier) {
+            if let user = try server.database["User"].findOne(matching: "_id" == identifier) {
                 to(user)
             }
         } catch {
@@ -105,9 +101,10 @@ open class AuthAccount : Account {
         }
     }
 
+    // Check if a user exists
 	func exists(_ un: String) -> Bool {
 		do {
-            let userCollection = mongoConnect!.database["User"]
+            let userCollection = server.database["User"]
             let q: Query = "username" == un
 
             if let _ = try userCollection.findOne(matching: q) {
@@ -121,21 +118,20 @@ open class AuthAccount : Account {
 		}
 	}
     
-    /*private func create() throws {
+    // Create a user document
+    private func create() throws {
         let user : Document = [
-            "token": ~self.token,
-            "userid": ~self.userid,
-            "created": ~self.created,
-            "updated": ~self.updated,
-            "idle": ~self.idle
+            "username": self.username,
+            "password": self.password
         ]
         
         do {
-            try mongo.database["Token"].insert(token)
+            try server.database["User"].insert(user)
         } catch {
-            throw MongoError.error("Error inserting new Token document: \(error)")
+            throw MongoConnectError.error("Error inserting new User document: \(error)")
         }
-    }*/
+    }
+
 }
 
 

@@ -14,43 +14,35 @@ import MongoKitten
 
 open class AccessTokenStore {
 
+    var server: MongoConnect
+    
 	var token: String = ""
 	var userid: String = ""
 	var created: Int = 0
 	var updated: Int = 0
 	var idle: Int = 86400 // 86400 seconds = 1 day
     
-    public init() {}
+    init(server:MongoConnect) {
+        self.server = server
+    }
     
 	// Need to do this because of the nature of Swift's introspection
 	open func to(_ this: Document) {
-		token		= this["token"].string
-		userid		= this["userid"].string
-		created		= this["created"].int
-		updated		= this["updated"].int
-		idle		= this["idle"].int
+        token		= this["token"] as String? ?? ""
+        userid		= this["userid"] as String? ?? ""
+        created		= this["created"] as Int? ?? now()
+        updated		= this["updated"] as Int? ?? now()
+        idle		= this["idle"] as Int? ?? 0
 	}
 
-    /*
-	func rows() -> [AccessTokenStore] {
-		var rows = [AccessTokenStore]()
-		for i in 0..<self.results.rows.count {
-			let row = AccessTokenStore()
-			row.to(self.results.rows[i])
-			rows.append(row)
-		}
-		return rows
-	}*/
-    
-	// Create the table if needed
-	/*public func setup() {
+	// Create the Token collection if needed
+	public func setup() {
 		do {
-			try sqlExec("CREATE TABLE IF NOT EXISTS tokens (token TEXT PRIMARY KEY NOT NULL, userid TEXT, created INTEGER, updated INTEGER, idle INTEGER)")
+			try server.database.createCollection("Token")
 		} catch {
 			print(error)
 		}
-	}*/
-
+	}
 
 	private func now() -> Int {
 		return Int(Date.timeIntervalSinceReferenceDate)
@@ -86,15 +78,15 @@ open class AccessTokenStore {
     
     private func create() throws {
         let token : Document = [
-            "token": ~self.token,
-            "userid": ~self.userid,
-            "created": ~self.created,
-            "updated": ~self.updated,
-            "idle": ~self.idle
+            "token": self.token,
+            "userid": self.userid,
+            "created": self.created,
+            "updated": self.updated,
+            "idle": self.idle
         ]
         
         do {
-            try mongoConnect!.database["Token"].insert(token)
+            try server.database["Token"].insert(token)
         } catch {
             throw MongoConnectError.error("Error inserting new Token document: \(error)")
         }
@@ -103,13 +95,13 @@ open class AccessTokenStore {
     private func save() throws {
         do {
             let token : Document = [
-                "token": ~self.token,
-                "userid": ~self.userid,
-                "created": ~self.created,
-                "updated": ~self.updated,
-                "idle": ~self.idle
+                "token": self.token,
+                "userid": self.userid,
+                "created": self.created,
+                "updated": self.updated,
+                "idle": self.idle
             ]
-            try mongoConnect!.database["Token"].update(matching: "token" == self.token, to: token)
+            try server.database["Token"].update(matching: "token" == self.token, to: token)
         } catch {
             throw MongoConnectError.error("Could not update token document")
         }
@@ -118,7 +110,7 @@ open class AccessTokenStore {
     // Try to get token by identifier
     public func get(identifier: String) throws {
         do {
-            if let token = try mongoConnect!.database["Token"].findOne(matching: "token" == ~identifier) {
+            if let token = try server.database["Token"].findOne(matching: "token" == identifier) {
                 to(token)
             }
         } catch {
@@ -130,7 +122,7 @@ open class AccessTokenStore {
     public func delete() throws {
         print ("Delete token: ",token)
         do {
-            try mongoConnect!.database["Token"].remove(matching: "token" == ~token)
+            try server.database["Token"].remove(matching: "token" == token)
         } catch {
             throw error
         }

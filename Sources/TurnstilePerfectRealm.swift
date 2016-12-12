@@ -12,12 +12,17 @@ import TurnstilePerfect
 import PerfectHTTP
 
 public class TurnstilePerfectRealm {
+    
 	public var requestFilter: (HTTPRequestFilter, HTTPFilterPriority)
 	public var responseFilter: (HTTPResponseFilter, HTTPFilterPriority)
 
 	private let turnstile: Turnstile
 	//MemorySessionManager
-	public init(sessionManager: SessionManager = PerfectSessionManager(), realm: Realm = AuthRealm()) {
+    public init(server: MongoConnect) {
+        
+        let sessionManager = PerfectSessionManager(server: server)
+        let realm = AuthRealm(server: server)
+            
 		turnstile = Turnstile(sessionManager: sessionManager, realm: realm)
 		let filter = TurnstileFilter(turnstile: turnstile)
 
