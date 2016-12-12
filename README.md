@@ -1,4 +1,4 @@
-# PerfectTurnstileMongoDB
+# Perfect-Turnstile-MongoKittenDB
 
 This project integrates Stormpath's Turnstile authentication system into a single package with Perfect, and MongoDB.
 
@@ -10,7 +10,7 @@ In your Package.swift file, include the following line inside the dependancy arr
 
 ``` swift
 .Package(
-	url: "https://github.com/bkostjens/Perfect-Turnstile-MongoDB.git",
+	url: "https://github.com/bkostjens/Perfect-Turnstile-MongoKittenDB.git",
 	majorVersion: 1, minor: 0
 	)
 ```
