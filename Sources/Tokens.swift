@@ -22,7 +22,7 @@ open class AccessTokenStore {
 	var updated: Int = 0
 	var idle: Int = 86400 // 86400 seconds = 1 day
     
-    init(server:MongoConnect) {
+    public init(server:MongoConnect) {
         self.server = server
     }
     
