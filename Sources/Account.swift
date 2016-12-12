@@ -32,7 +32,7 @@ open class AuthAccount : Account {
 		uniqueID = newid
 	}
 
-    init(server:MongoConnect) {
+    public init(server:MongoConnect) {
         self.server = server
         self.internal_token = AccessTokenStore(server: server)
     }
