@@ -1,7 +1,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "Perfect-Turnstile-MongoKittenDB",
+    name: "PerfectTurnstileMongoKittenDB",
     dependencies: [
 		.Package(url: "https://github.com/PerfectlySoft/Perfect-HTTPServer.git", majorVersion: 2, minor: 1),
 		.Package(url: "https://github.com/PerfectlySoft/Perfect-Mustache.git", majorVersion: 2, minor: 0),
