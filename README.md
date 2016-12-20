@@ -49,14 +49,9 @@ import PerfectTurnstileMongoDB
 
 // Setup the mongo db connection for PerfectTurnstileMongoDB
 let connect = MongoConnect(hostname:"localhost", databaseName: "ProProject")
-    
-// Setup the Authentication Collection
-let auth = AuthAccount(server: connect)
-auth.setup()
-    
+     
 // Connect the AccessTokenStore
 tokenStore = AccessTokenStore(server: connect)
-tokenStore?.setup()
     
 // Used later in script for the Realm and how the user authenticates.
 let pturnstile = TurnstilePerfectRealm(server: connect)
