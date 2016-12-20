@@ -19,8 +19,8 @@ In your Package.swift file, include the following line inside the dependancy arr
 The framework includes certain basic routes:
 
 ```
-POST /api/v1/login (with username & password form elements)
-POST /api/v1/register (with username & password form elements)
+POST /api/v1/login (with username & password as json encoded strings)
+POST /api/v1/register (with username & password as json encoded strings)
 GET /api/v1/logout
 ```
 
