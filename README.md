@@ -124,18 +124,10 @@ Define the location and name of the MongoDB database:
 connect = MongoConnect(hostname:"localhost", databaseName: "ProProject")
 ```
 
-Define, and initialize up the authentication table:
-
-``` swift 
-let auth = AuthAccount(server: connect)
-auth.setup()
-```
-
 Connect the AccessTokenStore:
 
 ``` swift
 tokenStore = AccessTokenStore(server: connect)
-tokenStore?.setup()
 ```
 
 Create the HTTP Server:
