@@ -11,8 +11,7 @@ In your Package.swift file, include the following line inside the dependancy arr
 ``` swift
 .Package(
 	url: "https://github.com/bkostjens/Perfect-Turnstile-MongoKittenDB.git",
-	majorVersion: 1, minor: 0
-	)
+	majorVersion: 1)
 ```
 
 ## Included JSON Routes
