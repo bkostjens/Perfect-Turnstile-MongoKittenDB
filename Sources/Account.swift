@@ -50,13 +50,14 @@ open class AuthAccount : Account {
 	}
     
 	// Create the collection if needed
-	public func setup() {
+    // Commented out as this is not needed: MongoDB auto creates collections when needed
+	/*public func setup() {
 		do {
 			try server.database.createCollection("User")
 		} catch {
 			print(error)
 		}
-	}
+	}*/
     
     func make() throws {
         do {

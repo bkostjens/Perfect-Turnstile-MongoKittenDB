@@ -36,13 +36,14 @@ open class AccessTokenStore {
 	}
 
 	// Create the Token collection if needed
-	public func setup() {
+    // Commented out as this is not needed: MongoDB auto creates collections when needed
+	/*public func setup() {
 		do {
 			try server.database.createCollection("Token")
 		} catch {
 			print(error)
 		}
-	}
+	}*/
 
 	private func now() -> Int {
 		return Int(Date.timeIntervalSinceReferenceDate)
