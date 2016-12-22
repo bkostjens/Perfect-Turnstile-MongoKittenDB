@@ -43,7 +43,7 @@ class AuthRealm : Realm {
 //		print("======= AUTHENTICATE AccessToken =======")
 		let account = AuthAccount(server: server)
 		let token = AccessTokenStore(server: server)
-//		print(credentials.string)
+
 		do {
 			try token.get(identifier: credentials.string)
 			if token.check() == false {

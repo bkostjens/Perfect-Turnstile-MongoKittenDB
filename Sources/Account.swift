@@ -49,16 +49,6 @@ open class AuthAccount : Account {
 		email		= this["email"] as String? ?? ""
 	}
     
-	// Create the collection if needed
-    // Commented out as this is not needed: MongoDB auto creates collections when needed
-	/*public func setup() {
-		do {
-			try server.database.createCollection("User")
-		} catch {
-			print(error)
-		}
-	}*/
-    
     func make() throws {
         do {
             password = BCrypt.hash(password: password)
@@ -91,10 +81,11 @@ open class AuthAccount : Account {
 		}
 	}
     
-    // Try to get token by identifier
+    // Try to get user by identifier
     public func get(identifier: String) throws {
         do {
-            if let user = try server.database["User"].findOne(matching: "_id" == identifier) {
+            try id = ObjectID(identifier)
+            if let user = try server.database["User"].findOne(matching: "_id" == id) {
                 to(user)
             }
         } catch {
