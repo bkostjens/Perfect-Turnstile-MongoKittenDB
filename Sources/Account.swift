@@ -84,7 +84,7 @@ open class AuthAccount : Account {
     // Try to get user by identifier
     public func get(identifier: String) throws {
         do {
-            try id = ObjectID(identifier)
+            let id = try ObjectId(identifier)
             if let user = try server.database["User"].findOne(matching: "_id" == id) {
                 to(user)
             }
