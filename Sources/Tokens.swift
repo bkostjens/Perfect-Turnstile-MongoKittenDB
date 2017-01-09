@@ -18,9 +18,9 @@ open class AccessTokenStore {
     
 	var token: String = ""
 	var userid: String = ""
-	var created: Int = 0
-	var updated: Int = 0
-	var idle: Int = 86400 // 86400 seconds = 1 day
+	var created: Double = 0
+	var updated: Double = 0
+	var idle: Double = 86400 // 86400 seconds = 1 day
     
     public init(server:MongoConnect) {
         self.server = server
@@ -30,9 +30,9 @@ open class AccessTokenStore {
 	open func to(_ this: Document) {
         token		= this["token"] as String? ?? ""
         userid		= this["userid"] as String? ?? ""
-        created		= this["created"] as Int? ?? now()
-        updated		= this["updated"] as Int? ?? now()
-        idle		= this["idle"] as Int? ?? 0
+        created		= this["created"] as Double? ?? now()
+        updated		= this["updated"] as Double? ?? now()
+        idle		= this["idle"] as Double? ?? 0
 	}
 
 	// Create the Token collection if needed
@@ -45,8 +45,8 @@ open class AccessTokenStore {
 		}
 	}*/
 
-	private func now() -> Int {
-		return Int(Date.timeIntervalSinceReferenceDate)
+	private func now() -> Double {
+		return Double(Date().timeIntervalSince1970)
 	}
 
 	// checks to see if the token is active
