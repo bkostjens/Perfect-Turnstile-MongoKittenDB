@@ -69,6 +69,7 @@ public class AuthHandlersJSON {
             resp["error"] = "none"
             resp["login"] = "ok"
             resp["token"] = token
+            resp["userID"] = request.user.authDetails?.account.uniqueID
         } catch {
             resp["error"] = "Invalid username or password"
         }
