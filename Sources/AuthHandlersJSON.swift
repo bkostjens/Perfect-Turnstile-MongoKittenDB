@@ -65,8 +65,6 @@ public class AuthHandlersJSON {
             try request.user.login(credentials: credentials)
             
             let token = tokenStore?.new((request.user.authDetails?.account.uniqueID)!)
-            
-            resp["error"] = "none"
             resp["login"] = "ok"
             resp["token"] = token
             resp["userID"] = request.user.authDetails?.account.uniqueID
