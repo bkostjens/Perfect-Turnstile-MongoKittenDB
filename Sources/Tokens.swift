@@ -22,8 +22,9 @@ open class AccessTokenStore {
 	var updated: Double = 0
 	var idle: Double = 86400 // 86400 seconds = 1 day
     
-    public init(server:MongoConnect) {
+    public init(server:MongoConnect, tokenTimeout: Double = 86400) {
         self.server = server
+        self.idle = tokenTimeout
     }
     
 	// Need to do this because of the nature of Swift's introspection
