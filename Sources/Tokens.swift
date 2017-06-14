@@ -29,11 +29,11 @@ open class AccessTokenStore {
     
 	// Need to do this because of the nature of Swift's introspection
 	open func to(_ this: Document) {
-        token		= this["token"] as String? ?? ""
-        userid		= this["userid"] as String? ?? ""
-        created		= this["created"] as Double? ?? now()
-        updated		= this["updated"] as Double? ?? now()
-        idle		= this["idle"] as Double? ?? 0
+        token		= this["token"]     == nil ? "" : String(describing: this["token"])
+        userid		= this["userid"]    == nil ? "" : String(describing:this["userid"])
+        created		= Double(this["created"]) ?? 0
+        updated		= Double(this["updated"]) ?? 0
+        idle		= Double(this["idle"]) ?? 86400
 	}
 
 	// Create the Token collection if needed
@@ -103,7 +103,7 @@ open class AccessTokenStore {
                 "updated": self.updated,
                 "idle": self.idle
             ]
-            try server.database["Token"].update(matching: "token" == self.token, to: token)
+            try server.database["Token"].update("token" == self.token, to: token)
         } catch {
             throw MongoConnectError.error("Could not update token document")
         }
@@ -112,7 +112,7 @@ open class AccessTokenStore {
     // Try to get token by identifier
     public func get(identifier: String) throws {
         do {
-            if let token = try server.database["Token"].findOne(matching: "token" == identifier) {
+            if let token = try server.database["Token"].findOne("token" == identifier) {
                 to(token)
             }
         } catch {
@@ -124,7 +124,7 @@ open class AccessTokenStore {
     public func delete() throws {
         print ("Delete token: ",token)
         do {
-            try server.database["Token"].remove(matching: "token" == token)
+            try server.database["Token"].remove("token" == token)
         } catch {
             throw error
         }

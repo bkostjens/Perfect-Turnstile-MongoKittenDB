@@ -16,7 +16,7 @@ public final class MongoConnect {
     
     public init(hostname : String = "localhost", databaseName : String = "User") {
         do {
-            server = try Server(mongoURL: "mongodb://\(hostname)")
+            server = try Server("mongodb://\(hostname)")
             database = server[databaseName]
         } catch {
             // Unable to connect

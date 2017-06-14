@@ -39,14 +39,14 @@ open class AuthAccount : Account {
     
 	// Need to do this because of the nature of Swift's introspection
 	open func to(_ this: Document) {
-		uniqueID	= this["_id"] as String? ?? ""
-		username	= this["username"] as String? ?? ""
-		password	= this["password"] as String? ?? ""
-		facebookID	= this["facebookID"] as String? ?? ""
-		googleID	= this["googleID"] as String? ?? ""
-		firstname	= this["firstname"] as String? ?? ""
-		lastname	= this["lastname"] as String? ?? ""
-		email		= this["email"] as String? ?? ""
+        uniqueID	= this["_id"] == nil ? "" : String(describing: this["_id"])
+        username	= this["username"] == nil ? "" : String(describing: this["username"])
+        password	= this["password"] == nil ? "" : String(describing: this["password"])
+        facebookID	= this["facebookID"] == nil ? "" : String(describing:this["facebookID"])
+        googleID	= this["googleID"] == nil ? "" : String(describing:this["googleID"])
+        firstname	= this["firstname"] == nil ? "" : String(describing:this["firstname"])
+        lastname	= this["lastname"] == nil ? "" : String(describing:this["lastname"])
+        email		= this["email"] == nil ? "" : String(describing:this["email"])
 	}
     
     func make() throws {
@@ -63,8 +63,8 @@ open class AuthAccount : Account {
         do {
             let userCollection = server.database["User"]
             let q: Query = "username" == un
-            if let user = try userCollection.findOne(matching: q) {
-                print ("User found! - \(user["firstname"] as String? ?? "")")
+            if let user = try userCollection.findOne(q) {
+                print ("User found! - \(String(describing: user["firstname"]))")
                 to(user)
             } else {
                 throw MongoConnectError.noRecordFound
@@ -85,7 +85,7 @@ open class AuthAccount : Account {
     public func get(identifier: String) throws {
         do {
             let id = try ObjectId(identifier)
-            if let user = try server.database["User"].findOne(matching: "_id" == id) {
+            if let user = try server.database["User"].findOne("_id" == id) {
                 to(user)
             }
         } catch {
@@ -99,7 +99,7 @@ open class AuthAccount : Account {
             let userCollection = server.database["User"]
             let q: Query = "username" == un
 
-            if let _ = try userCollection.findOne(matching: q) {
+            if let _ = try userCollection.findOne(q) {
 				return true
 			} else {
 				return false
