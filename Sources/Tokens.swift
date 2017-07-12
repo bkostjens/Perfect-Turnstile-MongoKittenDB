@@ -20,7 +20,7 @@ open class AccessTokenStore {
 	var userid: String = ""
 	var created: Double = 0
 	var updated: Double = 0
-	var idle: Double = 86400 // 86400 seconds = 1 day
+	var idle: Double = 7776000 // 86400 seconds = 1 day, 7776000 = 90 days
     
     public init(server:MongoConnect) {
         self.server = server
