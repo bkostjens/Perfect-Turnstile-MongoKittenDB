@@ -66,6 +66,13 @@ open class AccessTokenStore {
 	public func new(_ u: String) -> String {
 		let rand = URandom()
 		token = rand.secureToken
+        
+        // Dirty hack to prevent the '-' char to be in the token string
+        while token.range(of: "-") != nil {
+            let rand = URandom()
+            token = rand.secureToken
+        }
+        
 		userid = u
 		created = now()
 		updated = now()
